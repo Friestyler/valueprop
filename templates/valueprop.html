@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qollabi Value Proposition Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-group { margin-bottom: 1rem; }
+        #result { white-space: pre-wrap; }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="header-container">
+            <h1 class="mb-0">Qollabi Value Proposition Generator</h1>
+            <img src="/static/images/qollabi-logo.png" alt="Qollabi Logo" class="logo">
+        </div>
+        
+        <form id="valuePropositionForm">
+            <div class="form-group">
+                <label for="situation">Situation:</label>
+                <textarea class="form-control" id="situation" name="situation" rows="2" placeholder="What the user is trying to do"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="current_way">Current Way:</label>
+                <textarea class="form-control" id="current_way" name="current_way" rows="2" placeholder="How they are doing it today"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="problems">Problem(s):</label>
+                <textarea class="form-control" id="problems" name="problems" rows="2" placeholder="What blocks them"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="capabilities">Capability(ies):</label>
+                <textarea class="form-control" id="capabilities" name="capabilities" rows="2" placeholder="How your product helps"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="product_features">Product Category/Feature(s):</label>
+                <textarea class="form-control" id="product_features" name="product_features" rows="2" placeholder="What enables the use case"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="benefits">Benefit(s):</label>
+                <textarea class="form-control" id="benefits" name="benefits" rows="2" placeholder="Summary or Primary Benefit"></textarea>
+            </div>
+
+            <hr class="my-4">
+            <h3>Custom Prompting</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="framework_prompt">Framework Custom Instructions:</label>
+                        <textarea class="form-control" id="framework_prompt" name="framework_prompt" rows="2" 
+                            placeholder="Add specific instructions for the framework section..."></textarea>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="homepage_prompt">Homepage Custom Instructions:</label>
+                        <textarea class="form-control" id="homepage_prompt" name="homepage_prompt" rows="2" 
+                            placeholder="Add specific instructions for the homepage copy..."></textarea>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="social_prompt">Social Media Custom Instructions:</label>
+                        <textarea class="form-control" id="social_prompt" name="social_prompt" rows="2" 
+                            placeholder="Add specific instructions for social media content..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Generate</button>
+        </form>
+
+        <div class="mt-4">
+            <h2>Generated Content</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h3 class="h5 mb-0">Value Proposition Framework</h3>
+                            <button class="btn btn-sm btn-light regenerate-btn" data-section="framework">Regenerate</button>
+                        </div>
+                        <div id="framework-result" class="card-body bg-light"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                            <h3 class="h5 mb-0">Homepage Copy</h3>
+                            <button class="btn btn-sm btn-light regenerate-btn" data-section="homepage">Regenerate</button>
+                        </div>
+                        <div id="homepage-result" class="card-body bg-light"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                            <h3 class="h5 mb-0">Social Media Copy</h3>
+                            <button class="btn btn-sm btn-light regenerate-btn" data-section="social">Regenerate</button>
+                        </div>
+                        <div id="social-result" class="card-body bg-light"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let savedContent = {
+                framework: '',
+                homepage: '',
+                social: ''
+            };
+
+            function generateContent(section = null) {
+                const targetSection = section ? `#${section}-result` : '.card-body';
+                $(targetSection).html('Generating...');
+                
+                const data = {
+                    ...Object.fromEntries(new FormData($('#valuePropositionForm')[0])),
+                    section: section // Pass the section to backend
+                };
+                
+                $.ajax({
+                    url: '/generate',
+                    method: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            const content = response.content;
+                            const sections = content.split('SECTION');
+                            
+                            if (sections.length >= 4) {
+                                const frameworkContent = sections[1].replace('1 - Value Proposition Framework:', '').trim();
+                                const homepageContent = sections[2].replace('2 - Homepage Copy:', '').trim();
+                                const socialContent = sections[3].replace('3 - Social Media Copy:', '').trim();
+                                
+                                if (!section) {
+                                    // Initial generation - save all content
+                                    savedContent = {
+                                        framework: frameworkContent,
+                                        homepage: homepageContent,
+                                        social: socialContent
+                                    };
+                                    displayAllContent();
+                                } else {
+                                    // Update only the regenerated section
+                                    savedContent[section] = sections[1].trim();
+                                    $(`#${section}-result`).html(savedContent[section].replace(/\n/g, '<br>'));
+                                }
+                            } else {
+                                handleError('Error splitting content');
+                            }
+                        } else {
+                            handleError(response.error);
+                        }
+                    },
+                    error: function() {
+                        handleError('An error occurred while generating the content.');
+                    }
+                });
+            }
+
+            function displayAllContent() {
+                $('#framework-result').html(savedContent.framework.replace(/\n/g, '<br>'));
+                $('#homepage-result').html(savedContent.homepage.replace(/\n/g, '<br>'));
+                $('#social-result').html(savedContent.social.replace(/\n/g, '<br>'));
+            }
+
+            function handleError(error) {
+                const errorMessage = 'Error: ' + error;
+                $('.card-body').html(errorMessage);
+            }
+
+            // Initial generation
+            $('#valuePropositionForm').on('submit', function(e) {
+                e.preventDefault();
+                generateContent();
+            });
+
+            // Individual section regeneration
+            $('.regenerate-btn').on('click', function(e) {
+                e.preventDefault();
+                const section = $(this).data('section');
+                generateContent(section);
+            });
+        });
+    </script>
+</body>
+</html> 
