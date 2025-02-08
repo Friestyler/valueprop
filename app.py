@@ -94,7 +94,7 @@ Additional Instructions: {social_prompt}
 Format your response with clear section headers and keep each section concise and impactful."""
 
     try:
-        # Call OpenAI API
+        # Call OpenAI API (using new format)
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[
@@ -105,7 +105,7 @@ Format your response with clear section headers and keep each section concise an
             max_tokens=1000
         )
 
-        # Extract the generated content
+        # Extract the generated content (new format)
         generated_content = response.choices[0].message.content
 
         return jsonify({"success": True, "content": generated_content})
