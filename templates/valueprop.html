@@ -138,7 +138,7 @@
                 
                 const data = {
                     ...Object.fromEntries(new FormData($('#valuePropositionForm')[0])),
-                    section: section // Pass the section to backend
+                    section: section
                 };
                 
                 $.ajax({
@@ -147,16 +147,14 @@
                     data: data,
                     success: function(response) {
                         if (response.success) {
-                            const content = response.content;
-                            const sections = content.split('SECTION');
-                            
-                            if (sections.length >= 4) {
-                                const frameworkContent = sections[1].replace('1 - Value Proposition Framework:', '').trim();
-                                const homepageContent = sections[2].replace('2 - Homepage Copy:', '').trim();
-                                const socialContent = sections[3].replace('3 - Social Media Copy:', '').trim();
-                                
-                                if (!section) {
-                                    // Initial generation - save all content
+                            if (!section) {
+                                // Handle full generation
+                                const sections = response.content.split('SECTION');
+                                if (sections.length >= 4) {
+                                    const frameworkContent = sections[1].replace('1 - Value Proposition Framework:', '').trim();
+                                    const homepageContent = sections[2].replace('2 - Homepage Copy:', '').trim();
+                                    const socialContent = sections[3].replace('3 - Social Media Copy:', '').trim();
+                                    
                                     savedContent = {
                                         framework: frameworkContent,
                                         homepage: homepageContent,
@@ -164,27 +162,36 @@
                                     };
                                     displayAllContent();
                                 } else {
-                                    // Update only the regenerated section
-                                    savedContent[section] = sections[1].trim();
-                                    $(`#${section}-result`).html(savedContent[section].replace(/\n/g, '<br>'));
+                                    handleError('Error splitting content');
                                 }
                             } else {
-                                handleError('Error splitting content');
+                                // For single section regeneration, just update that section
+                                savedContent[section] = response.content;
+                                $(`#${section}-result`).html(response.content.replace(/\n/g, '<br>'));
                             }
                         } else {
-                            handleError(response.error);
+                            if (section) {
+                                $(`#${section}-result`).html('Error: ' + response.error);
+                            } else {
+                                handleError(response.error);
+                            }
                         }
                     },
                     error: function() {
-                        handleError('An error occurred while generating the content.');
+                        const errorMessage = 'An error occurred while generating the content.';
+                        if (section) {
+                            $(`#${section}-result`).html(errorMessage);
+                        } else {
+                            handleError(errorMessage);
+                        }
                     }
                 });
             }
 
             function displayAllContent() {
-                $('#framework-result').html(savedContent.framework.replace(/\n/g, '<br>'));
-                $('#homepage-result').html(savedContent.homepage.replace(/\n/g, '<br>'));
-                $('#social-result').html(savedContent.social.replace(/\n/g, '<br>'));
+                Object.keys(savedContent).forEach(key => {
+                    $(`#${key}-result`).html(savedContent[key].replace(/\n/g, '<br>'));
+                });
             }
 
             function handleError(error) {
