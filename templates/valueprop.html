@@ -280,83 +280,101 @@
             const filename = `value-${shortBenefit || 'proposition'}.pdf`;
             
             const doc = new jsPDF();
-            
-            // Add Qollabi logo with proper aspect ratio
+            const pageWidth = doc.internal.pageSize.width;
+            const margin = 10;
+            const maxWidth = pageWidth - 2 * margin;
+
+            // Function to wrap and print text with better formatting
+            function printWrappedText(text, x, y, maxWidth) {
+                // Split text into paragraphs
+                const paragraphs = text.split('\n');
+                let currentY = y;
+
+                for (const paragraph of paragraphs) {
+                    if (paragraph.trim() === '') {
+                        currentY += 5;
+                        continue;
+                    }
+
+                    // Handle section headers (lines ending with ':')
+                    if (paragraph.trim().endsWith(':')) {
+                        if (currentY > 280) {
+                            doc.addPage();
+                            currentY = 20;
+                        }
+                        doc.setFontSize(13);
+                        doc.text(paragraph, x, currentY);
+                        currentY += 7;
+                        doc.setFontSize(12);
+                        continue;
+                    }
+
+                    // Wrap and print regular text
+                    const lines = doc.splitTextToSize(paragraph, maxWidth);
+                    for (const line of lines) {
+                        if (currentY > 280) {
+                            doc.addPage();
+                            currentY = 20;
+                        }
+                        doc.text(line, x, currentY);
+                        currentY += 7;
+                    }
+                    currentY += 3; // Add space between paragraphs
+                }
+                return currentY;
+            }
+
+            // Add logo and title
             const logoImg = document.querySelector('.logo');
             const canvas = await html2canvas(logoImg);
-            const imgWidth = 40;  // Fixed width
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;  // Calculate height to maintain aspect ratio
+            const imgWidth = 40;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
             const logoData = canvas.toDataURL('image/png');
-            doc.addImage(logoData, 'PNG', 10, 10, imgWidth, imgHeight);
+            doc.addImage(logoData, 'PNG', margin, margin, imgWidth, imgHeight);
             
-            // Add title
+            // Add title with proper spacing
             doc.setFontSize(20);
             doc.text('Value Proposition Framework Results', 60, 25);
             
             let yPos = 40;
             
-            // Add Framework content
+            // Add Framework content with better formatting
             if (savedContent.framework) {
                 doc.setFontSize(16);
-                doc.text('Value Proposition Framework', 10, yPos);
+                doc.text('Value Proposition Framework', margin, yPos);
                 yPos += 10;
                 doc.setFontSize(12);
-                const frameworkLines = savedContent.framework.split('\n');
-                frameworkLines.forEach(line => {
-                    if (yPos > 280) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    doc.text(line, 10, yPos);
-                    yPos += 7;
-                });
+                yPos = printWrappedText(savedContent.framework, margin, yPos, maxWidth);
+                yPos += 10; // Add space between sections
             }
             
             // Add Homepage content
             if (savedContent.homepage) {
-                yPos += 10;
                 if (yPos > 260) {
                     doc.addPage();
                     yPos = 20;
                 }
                 doc.setFontSize(16);
-                doc.text('Homepage Copy', 10, yPos);
+                doc.text('Homepage Copy', margin, yPos);
                 yPos += 10;
                 doc.setFontSize(12);
-                const homepageLines = savedContent.homepage.split('\n');
-                homepageLines.forEach(line => {
-                    if (yPos > 280) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    doc.text(line, 10, yPos);
-                    yPos += 7;
-                });
+                yPos = printWrappedText(savedContent.homepage, margin, yPos, maxWidth);
+                yPos += 10;
             }
             
             // Add Social Media content
             if (savedContent.social) {
-                yPos += 10;
                 if (yPos > 260) {
                     doc.addPage();
                     yPos = 20;
                 }
                 doc.setFontSize(16);
-                doc.text('Social Media Copy', 10, yPos);
+                doc.text('Social Media Copy', margin, yPos);
                 yPos += 10;
                 doc.setFontSize(12);
-                const socialLines = savedContent.social.split('\n');
-                socialLines.forEach(line => {
-                    if (yPos > 280) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    doc.text(line, 10, yPos);
-                    yPos += 7;
-                });
+                yPos = printWrappedText(savedContent.social, margin, yPos, maxWidth);
             }
             
-            // Save the PDF
             doc.save(filename);
         }
 
@@ -384,16 +402,32 @@
             const filename = `company-${shortSummary || 'positioning'}.pdf`;
             
             const doc = new jsPDF();
-            
-            // Add Qollabi logo with proper aspect ratio
+            const pageWidth = doc.internal.pageSize.width;
+            const margin = 10;
+            const maxWidth = pageWidth - 2 * margin;
+
+            // Function to wrap and print text
+            function printWrappedText(text, x, y, maxWidth) {
+                const lines = doc.splitTextToSize(text, maxWidth);
+                lines.forEach(line => {
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(line, x, y);
+                    y += 7;
+                });
+                return y;
+            }
+
+            // Add logo and title
             const logoImg = document.querySelector('.logo');
             const canvas = await html2canvas(logoImg);
             const imgWidth = 40;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             const logoData = canvas.toDataURL('image/png');
-            doc.addImage(logoData, 'PNG', 10, 10, imgWidth, imgHeight);
+            doc.addImage(logoData, 'PNG', margin, margin, imgWidth, imgHeight);
             
-            // Update the title
             doc.setFontSize(20);
             doc.text('Company Positioning Results', 60, 25);
             
@@ -402,18 +436,10 @@
             // Add Context-Based Positioning
             if (savedContent['positioning-context']) {
                 doc.setFontSize(16);
-                doc.text('Context-Based Positioning', 10, yPos);
+                doc.text('Context-Based Positioning', margin, yPos);
                 yPos += 10;
                 doc.setFontSize(12);
-                const contextLines = savedContent['positioning-context'].split('\n');
-                contextLines.forEach(line => {
-                    if (yPos > 280) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    doc.text(line, 10, yPos);
-                    yPos += 7;
-                });
+                yPos = printWrappedText(savedContent['positioning-context'], margin, yPos, maxWidth);
             }
             
             // Add Standalone Positioning
@@ -424,21 +450,12 @@
                     yPos = 20;
                 }
                 doc.setFontSize(16);
-                doc.text('Standalone Positioning', 10, yPos);
+                doc.text('Standalone Positioning', margin, yPos);
                 yPos += 10;
                 doc.setFontSize(12);
-                const standaloneLines = savedContent['positioning-standalone'].split('\n');
-                standaloneLines.forEach(line => {
-                    if (yPos > 280) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    doc.text(line, 10, yPos);
-                    yPos += 7;
-                });
+                yPos = printWrappedText(savedContent['positioning-standalone'], margin, yPos, maxWidth);
             }
             
-            // Save the PDF
             doc.save(filename);
         }
 
