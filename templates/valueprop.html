@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qollabi Value Proposition Generator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         .form-group { margin-bottom: 1rem; }
         #result { white-space: pre-wrap; }
@@ -29,6 +31,15 @@
         .generate-btn {
             margin-bottom: 2rem;
         }
+        .save-pdf-btn {
+            float: right;
+            margin-bottom: 1rem;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -47,7 +58,7 @@
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="positioning-tab" data-bs-toggle="tab" data-bs-target="#positioning-section" type="button" role="tab">
-                    Qollabi Positioning
+                    Company Positioning
                 </button>
             </li>
         </ul>
@@ -114,6 +125,9 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary mt-3 generate-btn">Generate Framework Content</button>
+                    <button type="button" class="btn btn-secondary mt-3 save-pdf-btn" onclick="generateFrameworkPDF()">
+                        Save as PDF
+                    </button>
                 </form>
 
                 <div class="mt-4">
@@ -200,6 +214,9 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary mt-3 generate-btn">Generate Positioning</button>
+                    <button type="button" class="btn btn-secondary mt-3 save-pdf-btn" onclick="generatePositioningPDF()">
+                        Save as PDF
+                    </button>
                 </form>
 
                 <div class="mt-4">
@@ -233,15 +250,199 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function() {
-            let savedContent = {
-                framework: '',
-                homepage: '',
-                social: '',
-                'positioning-context': '',
-                'positioning-standalone': ''
-            };
+        // Move savedContent to global scope
+        let savedContent = {
+            framework: '',
+            homepage: '',
+            social: '',
+            'positioning-context': '',
+            'positioning-standalone': ''
+        };
 
+        // Initialize jsPDF
+        window.jsPDF = window.jspdf.jsPDF;
+
+        async function generateFrameworkPDF() {
+            // Get the main benefit from the form or generated content
+            let mainBenefit = document.getElementById('benefits').value;
+            if (!mainBenefit && savedContent.framework) {
+                // Try to extract benefit from generated content
+                const benefitMatch = savedContent.framework.match(/Benefit\(s\):[^\n]*\n[^\n]*/);
+                mainBenefit = benefitMatch ? benefitMatch[0].split('\n')[1].trim() : '';
+            }
+            // Clean and shorten the benefit text
+            const shortBenefit = mainBenefit
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .substring(0, 30);
+            
+            const filename = `value-${shortBenefit || 'proposition'}.pdf`;
+            
+            const doc = new jsPDF();
+            
+            // Add Qollabi logo with proper aspect ratio
+            const logoImg = document.querySelector('.logo');
+            const canvas = await html2canvas(logoImg);
+            const imgWidth = 40;  // Fixed width
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;  // Calculate height to maintain aspect ratio
+            const logoData = canvas.toDataURL('image/png');
+            doc.addImage(logoData, 'PNG', 10, 10, imgWidth, imgHeight);
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.text('Value Proposition Framework Results', 60, 25);
+            
+            let yPos = 40;
+            
+            // Add Framework content
+            if (savedContent.framework) {
+                doc.setFontSize(16);
+                doc.text('Value Proposition Framework', 10, yPos);
+                yPos += 10;
+                doc.setFontSize(12);
+                const frameworkLines = savedContent.framework.split('\n');
+                frameworkLines.forEach(line => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(line, 10, yPos);
+                    yPos += 7;
+                });
+            }
+            
+            // Add Homepage content
+            if (savedContent.homepage) {
+                yPos += 10;
+                if (yPos > 260) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                doc.setFontSize(16);
+                doc.text('Homepage Copy', 10, yPos);
+                yPos += 10;
+                doc.setFontSize(12);
+                const homepageLines = savedContent.homepage.split('\n');
+                homepageLines.forEach(line => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(line, 10, yPos);
+                    yPos += 7;
+                });
+            }
+            
+            // Add Social Media content
+            if (savedContent.social) {
+                yPos += 10;
+                if (yPos > 260) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                doc.setFontSize(16);
+                doc.text('Social Media Copy', 10, yPos);
+                yPos += 10;
+                doc.setFontSize(12);
+                const socialLines = savedContent.social.split('\n');
+                socialLines.forEach(line => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(line, 10, yPos);
+                    yPos += 7;
+                });
+            }
+            
+            // Save the PDF
+            doc.save(filename);
+        }
+
+        async function generatePositioningPDF() {
+            // Get the product name and category or key benefit
+            let summary = document.getElementById('product_name').value;
+            if (!summary) {
+                summary = document.getElementById('key_benefit').value;
+            }
+            if (!summary && savedContent['positioning-context']) {
+                // Try to extract from generated content
+                const lines = savedContent['positioning-context'].split('\n');
+                const productLine = lines.find(line => line.startsWith('Our product'));
+                if (productLine) {
+                    summary = productLine.split('is')[1]?.trim() || '';
+                }
+            }
+            // Clean and shorten the summary
+            const shortSummary = summary
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .substring(0, 30);
+            
+            const filename = `company-${shortSummary || 'positioning'}.pdf`;
+            
+            const doc = new jsPDF();
+            
+            // Add Qollabi logo with proper aspect ratio
+            const logoImg = document.querySelector('.logo');
+            const canvas = await html2canvas(logoImg);
+            const imgWidth = 40;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const logoData = canvas.toDataURL('image/png');
+            doc.addImage(logoData, 'PNG', 10, 10, imgWidth, imgHeight);
+            
+            // Update the title
+            doc.setFontSize(20);
+            doc.text('Company Positioning Results', 60, 25);
+            
+            let yPos = 40;
+            
+            // Add Context-Based Positioning
+            if (savedContent['positioning-context']) {
+                doc.setFontSize(16);
+                doc.text('Context-Based Positioning', 10, yPos);
+                yPos += 10;
+                doc.setFontSize(12);
+                const contextLines = savedContent['positioning-context'].split('\n');
+                contextLines.forEach(line => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(line, 10, yPos);
+                    yPos += 7;
+                });
+            }
+            
+            // Add Standalone Positioning
+            if (savedContent['positioning-standalone']) {
+                yPos += 10;
+                if (yPos > 260) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                doc.setFontSize(16);
+                doc.text('Standalone Positioning', 10, yPos);
+                yPos += 10;
+                doc.setFontSize(12);
+                const standaloneLines = savedContent['positioning-standalone'].split('\n');
+                standaloneLines.forEach(line => {
+                    if (yPos > 280) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(line, 10, yPos);
+                    yPos += 7;
+                });
+            }
+            
+            // Save the PDF
+            doc.save(filename);
+        }
+
+        $(document).ready(function() {
             function generatePositioning(specificSection = null) {
                 // Get positioning form data
                 const positioningData = new FormData($('#positioningForm')[0]);
@@ -374,19 +575,17 @@
                 $('.card-body').html(errorMessage);
             }
 
-            // Framework form submission
+            // Event handlers
             $('#valuePropositionForm').on('submit', function(e) {
                 e.preventDefault();
                 generateContent();
             });
 
-            // Positioning form submission
             $('#positioningForm').on('submit', function(e) {
                 e.preventDefault();
                 generatePositioning();
             });
 
-            // Individual section regeneration
             $('.regenerate-btn').on('click', function(e) {
                 e.preventDefault();
                 const section = $(this).data('section');
