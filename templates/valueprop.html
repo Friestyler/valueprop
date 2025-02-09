@@ -86,6 +86,55 @@
                 </div>
             </div>
 
+            <hr class="my-4">
+            <h3>Qollabi Positioning</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="target_customer">Target Customer:</label>
+                        <textarea class="form-control" id="target_customer" name="target_customer" rows="2" 
+                            placeholder="Who is your target customer?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="need_statement">Statement of Need/Opportunity:</label>
+                        <textarea class="form-control" id="need_statement" name="need_statement" rows="2" 
+                            placeholder="What is their need or opportunity?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_name">Product Name:</label>
+                        <textarea class="form-control" id="product_name" name="product_name" rows="1" 
+                            placeholder="What is your product called?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_category">Product Category:</label>
+                        <textarea class="form-control" id="product_category" name="product_category" rows="1" 
+                            placeholder="What category does your product belong to?"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="key_benefit">Key Benefit:</label>
+                        <textarea class="form-control" id="key_benefit" name="key_benefit" rows="2" 
+                            placeholder="What is the compelling reason to buy?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="competitive_alt">Primary Competitive Alternative:</label>
+                        <textarea class="form-control" id="competitive_alt" name="competitive_alt" rows="2" 
+                            placeholder="What is the main alternative solution?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="differentiation">Primary Differentiation:</label>
+                        <textarea class="form-control" id="differentiation" name="differentiation" rows="2" 
+                            placeholder="What makes your product unique?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="social_proof">Social Proof:</label>
+                        <textarea class="form-control" id="social_proof" name="social_proof" rows="2" 
+                            placeholder="Key customers, case studies, or validation"></textarea>
+                    </div>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary mt-3">Generate</button>
         </form>
 
@@ -119,6 +168,24 @@
                         <div id="social-result" class="card-body bg-light"></div>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                            <h3 class="h5 mb-0">Qollabi Positioning (Based on Above)</h3>
+                            <button class="btn btn-sm btn-light regenerate-btn" data-section="positioning-context">Regenerate</button>
+                        </div>
+                        <div id="positioning-context-result" class="card-body bg-light"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                            <h3 class="h5 mb-0">Qollabi Positioning (Standalone)</h3>
+                            <button class="btn btn-sm btn-light regenerate-btn" data-section="positioning-standalone">Regenerate</button>
+                        </div>
+                        <div id="positioning-standalone-result" class="card-body bg-light"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -129,7 +196,9 @@
             let savedContent = {
                 framework: '',
                 homepage: '',
-                social: ''
+                social: '',
+                'positioning-context': '',
+                'positioning-standalone': ''
             };
 
             function generateContent(section = null) {
@@ -150,15 +219,19 @@
                             if (!section) {
                                 // Handle full generation
                                 const sections = response.content.split('SECTION');
-                                if (sections.length >= 4) {
+                                if (sections.length >= 6) {
                                     const frameworkContent = sections[1].replace('1 - Value Proposition Framework:', '').trim();
                                     const homepageContent = sections[2].replace('2 - Homepage Copy:', '').trim();
                                     const socialContent = sections[3].replace('3 - Social Media Copy:', '').trim();
+                                    const positioningContextContent = sections[4].replace('4 - Qollabi Positioning (Context-Based):', '').trim();
+                                    const positioningStandaloneContent = sections[5].replace('5 - Qollabi Positioning (Standalone):', '').trim();
                                     
                                     savedContent = {
                                         framework: frameworkContent,
                                         homepage: homepageContent,
-                                        social: socialContent
+                                        social: socialContent,
+                                        'positioning-context': positioningContextContent,
+                                        'positioning-standalone': positioningStandaloneContent
                                     };
                                     displayAllContent();
                                 } else {
