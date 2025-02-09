@@ -20,6 +20,15 @@
             height: 40px;
             width: auto;
         }
+        .nav-tabs {
+            margin-bottom: 2rem;
+        }
+        .tab-content {
+            padding-top: 1rem;
+        }
+        .generate-btn {
+            margin-bottom: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -29,161 +38,191 @@
             <img src="/static/images/qollabi-logo.png" alt="Qollabi Logo" class="logo">
         </div>
         
-        <form id="valuePropositionForm">
-            <div class="form-group">
-                <label for="situation">Situation:</label>
-                <textarea class="form-control" id="situation" name="situation" rows="2" placeholder="What the user is trying to do"></textarea>
-            </div>
+        <!-- Tabs navigation -->
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="framework-tab" data-bs-toggle="tab" data-bs-target="#framework-section" type="button" role="tab">
+                    Value Proposition Framework
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="positioning-tab" data-bs-toggle="tab" data-bs-target="#positioning-section" type="button" role="tab">
+                    Qollabi Positioning
+                </button>
+            </li>
+        </ul>
 
-            <div class="form-group">
-                <label for="current_way">Current Way:</label>
-                <textarea class="form-control" id="current_way" name="current_way" rows="2" placeholder="How they are doing it today"></textarea>
-            </div>
+        <!-- Tabs content -->
+        <div class="tab-content" id="mainTabsContent">
+            <!-- Framework Tab -->
+            <div class="tab-pane fade show active" id="framework-section" role="tabpanel">
+                <form id="valuePropositionForm">
+                    <div class="form-group">
+                        <label for="situation">Situation:</label>
+                        <textarea class="form-control" id="situation" name="situation" rows="2" placeholder="What the user is trying to do"></textarea>
+                    </div>
 
-            <div class="form-group">
-                <label for="problems">Problem(s):</label>
-                <textarea class="form-control" id="problems" name="problems" rows="2" placeholder="What blocks them"></textarea>
-            </div>
+                    <div class="form-group">
+                        <label for="current_way">Current Way:</label>
+                        <textarea class="form-control" id="current_way" name="current_way" rows="2" placeholder="How they are doing it today"></textarea>
+                    </div>
 
-            <div class="form-group">
-                <label for="capabilities">Capability(ies):</label>
-                <textarea class="form-control" id="capabilities" name="capabilities" rows="2" placeholder="How your product helps"></textarea>
-            </div>
+                    <div class="form-group">
+                        <label for="problems">Problem(s):</label>
+                        <textarea class="form-control" id="problems" name="problems" rows="2" placeholder="What blocks them"></textarea>
+                    </div>
 
-            <div class="form-group">
-                <label for="product_features">Product Category/Feature(s):</label>
-                <textarea class="form-control" id="product_features" name="product_features" rows="2" placeholder="What enables the use case"></textarea>
-            </div>
+                    <div class="form-group">
+                        <label for="capabilities">Capability(ies):</label>
+                        <textarea class="form-control" id="capabilities" name="capabilities" rows="2" placeholder="How your product helps"></textarea>
+                    </div>
 
-            <div class="form-group">
-                <label for="benefits">Benefit(s):</label>
-                <textarea class="form-control" id="benefits" name="benefits" rows="2" placeholder="Summary or Primary Benefit"></textarea>
-            </div>
+                    <div class="form-group">
+                        <label for="product_features">Product Category/Feature(s):</label>
+                        <textarea class="form-control" id="product_features" name="product_features" rows="2" placeholder="What enables the use case"></textarea>
+                    </div>
 
-            <hr class="my-4">
-            <h3>Custom Prompting</h3>
-            <div class="row">
-                <div class="col-md-4">
                     <div class="form-group">
-                        <label for="framework_prompt">Framework Custom Instructions:</label>
-                        <textarea class="form-control" id="framework_prompt" name="framework_prompt" rows="2" 
-                            placeholder="Add specific instructions for the framework section..."></textarea>
+                        <label for="benefits">Benefit(s):</label>
+                        <textarea class="form-control" id="benefits" name="benefits" rows="2" placeholder="Summary or Primary Benefit"></textarea>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="homepage_prompt">Homepage Custom Instructions:</label>
-                        <textarea class="form-control" id="homepage_prompt" name="homepage_prompt" rows="2" 
-                            placeholder="Add specific instructions for the homepage copy..."></textarea>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="social_prompt">Social Media Custom Instructions:</label>
-                        <textarea class="form-control" id="social_prompt" name="social_prompt" rows="2" 
-                            placeholder="Add specific instructions for social media content..."></textarea>
-                    </div>
-                </div>
-            </div>
 
-            <hr class="my-4">
-            <h3>Qollabi Positioning</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="target_customer">Target Customer:</label>
-                        <textarea class="form-control" id="target_customer" name="target_customer" rows="2" 
-                            placeholder="Who is your target customer?"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="need_statement">Statement of Need/Opportunity:</label>
-                        <textarea class="form-control" id="need_statement" name="need_statement" rows="2" 
-                            placeholder="What is their need or opportunity?"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="product_name">Product Name:</label>
-                        <textarea class="form-control" id="product_name" name="product_name" rows="1" 
-                            placeholder="What is your product called?"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="product_category">Product Category:</label>
-                        <textarea class="form-control" id="product_category" name="product_category" rows="1" 
-                            placeholder="What category does your product belong to?"></textarea>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="key_benefit">Key Benefit:</label>
-                        <textarea class="form-control" id="key_benefit" name="key_benefit" rows="2" 
-                            placeholder="What is the compelling reason to buy?"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="competitive_alt">Primary Competitive Alternative:</label>
-                        <textarea class="form-control" id="competitive_alt" name="competitive_alt" rows="2" 
-                            placeholder="What is the main alternative solution?"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="differentiation">Primary Differentiation:</label>
-                        <textarea class="form-control" id="differentiation" name="differentiation" rows="2" 
-                            placeholder="What makes your product unique?"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="social_proof">Social Proof:</label>
-                        <textarea class="form-control" id="social_proof" name="social_proof" rows="2" 
-                            placeholder="Key customers, case studies, or validation"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary mt-3">Generate</button>
-        </form>
-
-        <div class="mt-4">
-            <h2>Generated Content</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                            <h3 class="h5 mb-0">Value Proposition Framework</h3>
-                            <button class="btn btn-sm btn-light regenerate-btn" data-section="framework">Regenerate</button>
+                    <hr class="my-4">
+                    <h3>Custom Prompting</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="framework_prompt">Framework Custom Instructions:</label>
+                                <textarea class="form-control" id="framework_prompt" name="framework_prompt" rows="2" 
+                                    placeholder="Add specific instructions for the framework section..."></textarea>
+                            </div>
                         </div>
-                        <div id="framework-result" class="card-body bg-light"></div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="homepage_prompt">Homepage Custom Instructions:</label>
+                                <textarea class="form-control" id="homepage_prompt" name="homepage_prompt" rows="2" 
+                                    placeholder="Add specific instructions for the homepage copy..."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="social_prompt">Social Media Custom Instructions:</label>
+                                <textarea class="form-control" id="social_prompt" name="social_prompt" rows="2" 
+                                    placeholder="Add specific instructions for social media content..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3 generate-btn">Generate Framework Content</button>
+                </form>
+
+                <div class="mt-4">
+                    <h2>Generated Framework Content</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h3 class="h5 mb-0">Value Proposition Framework</h3>
+                                    <button class="btn btn-sm btn-light regenerate-btn" data-section="framework">Regenerate</button>
+                                </div>
+                                <div id="framework-result" class="card-body bg-light"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                    <h3 class="h5 mb-0">Homepage Copy</h3>
+                                    <button class="btn btn-sm btn-light regenerate-btn" data-section="homepage">Regenerate</button>
+                                </div>
+                                <div id="homepage-result" class="card-body bg-light"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                                    <h3 class="h5 mb-0">Social Media Copy</h3>
+                                    <button class="btn btn-sm btn-light regenerate-btn" data-section="social">Regenerate</button>
+                                </div>
+                                <div id="social-result" class="card-body bg-light"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                            <h3 class="h5 mb-0">Homepage Copy</h3>
-                            <button class="btn btn-sm btn-light regenerate-btn" data-section="homepage">Regenerate</button>
+            </div>
+
+            <!-- Positioning Tab -->
+            <div class="tab-pane fade" id="positioning-section" role="tabpanel">
+                <form id="positioningForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="target_customer">Target Customer:</label>
+                                <textarea class="form-control" id="target_customer" name="target_customer" rows="2" 
+                                    placeholder="Who is your target customer?"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="need_statement">Statement of Need/Opportunity:</label>
+                                <textarea class="form-control" id="need_statement" name="need_statement" rows="2" 
+                                    placeholder="What is their need or opportunity?"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_name">Product Name:</label>
+                                <textarea class="form-control" id="product_name" name="product_name" rows="1" 
+                                    placeholder="What is your product called?"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_category">Product Category:</label>
+                                <textarea class="form-control" id="product_category" name="product_category" rows="1" 
+                                    placeholder="What category does your product belong to?"></textarea>
+                            </div>
                         </div>
-                        <div id="homepage-result" class="card-body bg-light"></div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="key_benefit">Key Benefit:</label>
+                                <textarea class="form-control" id="key_benefit" name="key_benefit" rows="2" 
+                                    placeholder="What is the compelling reason to buy?"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="competitive_alt">Primary Competitive Alternative:</label>
+                                <textarea class="form-control" id="competitive_alt" name="competitive_alt" rows="2" 
+                                    placeholder="What is the main alternative solution?"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="differentiation">Primary Differentiation:</label>
+                                <textarea class="form-control" id="differentiation" name="differentiation" rows="2" 
+                                    placeholder="What makes your product unique?"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="social_proof">Social Proof:</label>
+                                <textarea class="form-control" id="social_proof" name="social_proof" rows="2" 
+                                    placeholder="Key customers, case studies, or validation"></textarea>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                            <h3 class="h5 mb-0">Social Media Copy</h3>
-                            <button class="btn btn-sm btn-light regenerate-btn" data-section="social">Regenerate</button>
+                    <button type="submit" class="btn btn-primary mt-3 generate-btn">Generate Positioning</button>
+                </form>
+
+                <div class="mt-4">
+                    <h2>Generated Positioning</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                                    <h3 class="h5 mb-0">Context-Based Positioning</h3>
+                                    <button class="btn btn-sm btn-light regenerate-btn" data-section="positioning-context">Regenerate</button>
+                                </div>
+                                <div id="positioning-context-result" class="card-body bg-light"></div>
+                            </div>
                         </div>
-                        <div id="social-result" class="card-body bg-light"></div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
-                            <h3 class="h5 mb-0">Qollabi Positioning (Based on Above)</h3>
-                            <button class="btn btn-sm btn-light regenerate-btn" data-section="positioning-context">Regenerate</button>
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                                    <h3 class="h5 mb-0">Standalone Positioning</h3>
+                                    <button class="btn btn-sm btn-light regenerate-btn" data-section="positioning-standalone">Regenerate</button>
+                                </div>
+                                <div id="positioning-standalone-result" class="card-body bg-light"></div>
+                            </div>
                         </div>
-                        <div id="positioning-context-result" class="card-body bg-light"></div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
-                            <h3 class="h5 mb-0">Qollabi Positioning (Standalone)</h3>
-                            <button class="btn btn-sm btn-light regenerate-btn" data-section="positioning-standalone">Regenerate</button>
-                        </div>
-                        <div id="positioning-standalone-result" class="card-body bg-light"></div>
                     </div>
                 </div>
             </div>
@@ -191,6 +230,8 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function() {
             let savedContent = {
@@ -201,14 +242,75 @@
                 'positioning-standalone': ''
             };
 
-            function generateContent(section = null) {
+            function generatePositioning(specificSection = null) {
+                // Get positioning form data
+                const positioningData = new FormData($('#positioningForm')[0]);
+                const positioningValues = Object.fromEntries(positioningData);
+                
+                // Check if any positioning fields are filled
+                const hasPositioningInput = Object.values(positioningValues).some(value => value.trim() !== '');
+                
+                if (hasPositioningInput) {
+                    if (specificSection === 'positioning-context') {
+                        // For context-based positioning, combine positioning inputs with framework data
+                        const frameworkData = new FormData($('#valuePropositionForm')[0]);
+                        const combinedData = {
+                            ...Object.fromEntries(frameworkData),
+                            ...positioningValues,
+                            useFrameworkContext: true,
+                            // Add saved framework content for context
+                            frameworkContent: savedContent.framework,
+                            homepageContent: savedContent.homepage,
+                            socialContent: savedContent.social
+                        };
+                        generateContent('positioning-context', combinedData);
+                    } else if (specificSection === 'positioning-standalone') {
+                        // For standalone positioning, use only positioning inputs
+                        generateContent('positioning-standalone', {
+                            ...positioningValues,
+                            useFrameworkContext: false
+                        });
+                    } else {
+                        // If no specific section (initial generation), generate both
+                        const frameworkData = new FormData($('#valuePropositionForm')[0]);
+                        const combinedData = {
+                            ...Object.fromEntries(frameworkData),
+                            ...positioningValues,
+                            useFrameworkContext: true,
+                            // Add saved framework content for context
+                            frameworkContent: savedContent.framework,
+                            homepageContent: savedContent.homepage,
+                            socialContent: savedContent.social
+                        };
+                        generateContent('positioning-context', combinedData);
+                        generateContent('positioning-standalone', {
+                            ...positioningValues,
+                            useFrameworkContext: false
+                        });
+                    }
+                } else {
+                    if (!specificSection || specificSection === 'positioning-context') {
+                        $('#positioning-context-result').html('Please fill in at least one positioning field to generate positioning statements.');
+                    }
+                    if (!specificSection || specificSection === 'positioning-standalone') {
+                        $('#positioning-standalone-result').html('Please fill in at least one positioning field to generate positioning statements.');
+                    }
+                }
+            }
+
+            function generateContent(section = null, additionalData = null) {
                 const targetSection = section ? `#${section}-result` : '.card-body';
                 $(targetSection).html('Generating...');
                 
-                const data = {
-                    ...Object.fromEntries(new FormData($('#valuePropositionForm')[0])),
-                    section: section
-                };
+                let data;
+                if (additionalData) {
+                    data = { ...additionalData, section: section };
+                } else {
+                    data = {
+                        ...Object.fromEntries(new FormData($('#valuePropositionForm')[0])),
+                        section: section
+                    };
+                }
                 
                 $.ajax({
                     url: '/generate',
@@ -272,17 +374,27 @@
                 $('.card-body').html(errorMessage);
             }
 
-            // Initial generation
+            // Framework form submission
             $('#valuePropositionForm').on('submit', function(e) {
                 e.preventDefault();
                 generateContent();
+            });
+
+            // Positioning form submission
+            $('#positioningForm').on('submit', function(e) {
+                e.preventDefault();
+                generatePositioning();
             });
 
             // Individual section regeneration
             $('.regenerate-btn').on('click', function(e) {
                 e.preventDefault();
                 const section = $(this).data('section');
-                generateContent(section);
+                if (section === 'positioning-context' || section === 'positioning-standalone') {
+                    generatePositioning(section);
+                } else {
+                    generateContent(section);
+                }
             });
         });
     </script>

@@ -36,7 +36,6 @@ def generate():
 
     try:
         if section:
-            # For single section regeneration
             if section == 'framework':
                 prompt = f"""Create a structured value proposition following exactly this format:
 
@@ -83,17 +82,36 @@ Important: Maintain exactly these four lines starting with 'We are...', 'That he
 Additional Instructions: {social_prompt}"""
 
             elif section == 'positioning-context':
-                prompt = f"""Create a positioning statement using the following structure and incorporating insights from the previous sections:
+                # Get positioning inputs
+                target_customer = request.form.get('target_customer', '').strip()
+                need_statement = request.form.get('need_statement', '').strip()
+                product_name = request.form.get('product_name', '').strip()
+                product_category = request.form.get('product_category', '').strip()
+                key_benefit = request.form.get('key_benefit', '').strip()
+                competitive_alt = request.form.get('competitive_alt', '').strip()
+                differentiation = request.form.get('differentiation', '').strip()
+                social_proof = request.form.get('social_proof', '').strip()
 
-For {request.form.get('target_customer', '[derived from context]')}
-Who {request.form.get('need_statement', situation)}
-Our product {request.form.get('product_name', product_features)} is {request.form.get('product_category', '[derived from context]')}
-That {request.form.get('key_benefit', benefits)}
-Unlike {request.form.get('competitive_alt', current_way)}
-Our product {request.form.get('differentiation', capabilities)}
-Proven by {request.form.get('social_proof', '[derived from context]')}
+                # Get framework content
+                framework_content = request.form.get('frameworkContent', '')
 
-Use the structure above but incorporate insights from:
+                # Create context-aware positioning statement
+                prompt = f"""Create a positioning statement that prioritizes the provided positioning inputs and enhances them with framework insights.
+
+First, use these positioning inputs as the primary source:
+Target Customer: {target_customer or '[Use framework insight]'}
+Need/Opportunity: {need_statement or '[Use framework insight]'}
+Product Name: {product_name or '[Use framework insight]'}
+Product Category: {product_category or '[Use framework insight]'}
+Key Benefit: {key_benefit or '[Use framework insight]'}
+Competitive Alternative: {competitive_alt or '[Use framework insight]'}
+Primary Differentiation: {differentiation or '[Use framework insight]'}
+Social Proof: {social_proof or '[Use framework insight]'}
+
+Then, enhance and fill gaps using these framework insights:
+{framework_content}
+
+Additional context from framework:
 Situation: {situation}
 Current Way: {current_way}
 Problems: {problems}
@@ -101,20 +119,49 @@ Capabilities: {capabilities}
 Product Features: {product_features}
 Benefits: {benefits}
 
-Important: Maintain exactly this seven-line structure in your response."""
+Create a positioning statement using exactly this structure:
+For [target customer]
+Who [statement of need or opportunity]
+Our product [product name] is [category]
+That [key benefit – compelling reason to buy]
+Unlike [primary competitive alternative]
+Our product [statement of primary differentiation]
+Proven by [credible social proof]
+
+Important: 
+1. Prioritize using the positioning inputs when provided
+2. Use framework insights to enhance and fill gaps in the positioning
+3. Maintain exactly this seven-line structure
+4. Each line must start with the exact phrases shown above"""
 
             elif section == 'positioning-standalone':
-                prompt = f"""Create a positioning statement using exactly this structure:
+                # Only use positioning inputs
+                prompt = f"""Create a positioning statement using only the provided inputs:
 
-For {request.form.get('target_customer', 'N/A')}
-Who {request.form.get('need_statement', 'N/A')}
-Our product {request.form.get('product_name', 'N/A')} is {request.form.get('product_category', 'N/A')}
-That {request.form.get('key_benefit', 'N/A')}
-Unlike {request.form.get('competitive_alt', 'N/A')}
-Our product {request.form.get('differentiation', 'N/A')}
-Proven by {request.form.get('social_proof', 'N/A')}
+Target Customer: {request.form.get('target_customer', 'N/A')}
+Need/Opportunity: {request.form.get('need_statement', 'N/A')}
+Product Name: {request.form.get('product_name', 'N/A')}
+Product Category: {request.form.get('product_category', 'N/A')}
+Key Benefit: {request.form.get('key_benefit', 'N/A')}
+Competitive Alternative: {request.form.get('competitive_alt', 'N/A')}
+Primary Differentiation: {request.form.get('differentiation', 'N/A')}
+Social Proof: {request.form.get('social_proof', 'N/A')}
 
-Important: Maintain exactly this seven-line structure in your response, using only the provided inputs."""
+Create a positioning statement using exactly this structure:
+For [target customer]
+Who [statement of need or opportunity]
+Our product [product name] is [category]
+That [key benefit – compelling reason to buy]
+Unlike [primary competitive alternative]
+Our product [statement of primary differentiation]
+Proven by [credible social proof]
+
+Important:
+1. Use ONLY the provided inputs above
+2. Do NOT use any framework insights
+3. If an input is 'N/A', create appropriate content based on other provided inputs
+4. Maintain exactly this seven-line structure
+5. Each line must start with the exact phrases shown above"""
         else:
             # Original full prompt for initial generation
             prompt = f"""Please provide three separate sections:
